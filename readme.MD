@@ -10,7 +10,7 @@ The Peachtree Audio Decco amplifier (2007) is known for its excellent sound, but
 
 To solve the broken USB issue, I added a Raspberry Pi running Hifiberry OS with a [hifiberry DAC](https://www.hifiberry.com/shop/boards/dacplus-dsp/) HAT , allowing me to stream audio remotely. 
 
-To further automate the process, I created this project to simulate the remote, and turn the decco amplifier on when the music starts playing on the hifiberry. This sequence takes 30 seconds, because the analog tube needs to warm up. And I have no patience to walk to the amplifier and turn it on.  Automate everything.
+To further automate the process, I created this project to simulate the remote, and turn the decco amplifier on when the music starts playing on the hifiberry. This sequence takes 30 seconds, because the analog tube needs to warm up. And I have no patience to walk to the amplifier and turn it on and stand around for 30 seconds.  Automate everything.
 
 This project is made possible through the LIRC config file for the peachtree remote from   [Part of the Thing](https://partofthething.com/thoughts/a-lirc-config-file-for-the-peachtree-audio-decco-ir-remote-control/) 
 
