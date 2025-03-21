@@ -31,7 +31,7 @@ HIFIBERRY_DEFAULT_VOLUME = 35 # measured in IR VOL_UP ticks
 STATUS_FILE = "/var/tmp/peachtree_amplifier_status.txt"  # Path to save amplifier status
 
 CHECK_INTERVAL = 10  # Check every 10 seconds
-NO_SOUND_THRESHOLD = 20 * 60  # Turn off amp after 20 minutes of no sound
+NO_SOUND_THRESHOLD = 60 * 60  # Turn off amp after 20 minutes of no sound
 
 def log_message(message):
     """Logs a message with a timestamp."""
@@ -82,7 +82,7 @@ def turn_amplifier_on():
 
     volume_ticks = round(HIFIBERRY_DEFAULT_VOLUME + random.gauss(0, 0.1 * HIFIBERRY_DEFAULT_VOLUME))
     write_amplifier_status(True)
-    AMPLIFIER_ON_CMD = "irsend SEND_ONCE decco ON "+HIFIBERRY_SOUND_CHANNEL+"  && sleep 20 && irsend SEND_ONCE decco -# "+str(volume_ticks)+" VOL_UP "
+    AMPLIFIER_ON_CMD = "irsend SEND_ONCE decco ON "+HIFIBERRY_SOUND_CHANNEL+"  && sleep 30 && irsend SEND_ONCE decco -# "+str(volume_ticks)+" VOL_UP "
     os.system(AMPLIFIER_ON_CMD)
 
     log_message("Amplifier turned ON")

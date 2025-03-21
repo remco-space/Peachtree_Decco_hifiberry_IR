@@ -133,4 +133,5 @@ This project brings modern convenience to the Peachtree Decco amplifier, combini
 
 
 - Mount the pi, including soldering the IR led,  inside the decco housing, to make it neater
-- Add LIRC to the hifiberryOS, so that i can run both the DAC and the IR led from the same raspberry PI. This requires 
+- Add LIRC to the hifiberryOS, so that i can run both the DAC and the IR led from the same raspberry PI. This requires rebuilding the whole of hifiberryos, as it uses buildroot and currently does not include LIRC.
+- improve the LIRC configuration for the decco remote, so that it doesn't stutter while continously moving the volume. I tried adjusting the gap parameter downwards. That made it better, but still not smooth. 
