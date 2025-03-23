@@ -26,12 +26,12 @@ This program automatically controls the Peachtree Decco amplifier based on music
 HIFIBERRY_HOST = "root@192.168.178.6"
 HIFIBERRY_CHECK_SOUND_CMD = "cat /proc/asound/card0/pcm0p/sub0/status | grep RUNNING"
 HIFIBERRY_SOUND_CHANNEL = "AUX1" # Standard sound input
-HIFIBERRY_DEFAULT_VOLUME = 35 # measured in IR VOL_UP ticks
+HIFIBERRY_DEFAULT_VOLUME = 18 # measured in IR VOL_UP ticks
 
 STATUS_FILE = "/var/tmp/peachtree_amplifier_status.txt"  # Path to save amplifier status
 
 CHECK_INTERVAL = 10  # Check every 10 seconds
-NO_SOUND_THRESHOLD = 60 * 60  # Turn off amp after 20 minutes of no sound
+NO_SOUND_THRESHOLD = 60 * 60  # Turn off amp after 60 minutes of no sound
 
 def log_message(message):
     """Logs a message with a timestamp."""
@@ -40,7 +40,7 @@ def log_message(message):
 global flag_ssh_connection_failed 
 flag_ssh_connection_failed = False
 
-def read_pcm_status():
+def read_pcm_status_remote():
     """
     Checks the PCM status on the remote device via SSH.
     Returns True if 'RUNNING' is detected, indicating that music is playing.
@@ -62,7 +62,20 @@ def read_pcm_status():
         return False
     except subprocess.CalledProcessError:
         return False
-
+    
+def read_pcm_status_local():
+    """
+    Checks the PCM status on the local device.
+    Returns True if the status file starts with 'state: RUNNING', indicating that music is playing.
+    """
+    status_path = '/proc/asound/card0/pcm0p/sub0/status'
+    try:
+        with open(status_path, 'r') as f:
+            first_line = f.readline().strip()
+            return first_line == 'state: RUNNING'
+    except (FileNotFoundError, IOError):
+        return False
+    
 def read_amplifier_status():
     """Reads the current amplifier status from disk."""
     if os.path.exists(STATUS_FILE):
@@ -110,7 +123,7 @@ def process_music_status(amplifier_on, no_sound_time):
     Processes the status of music playback, turning the amplifier on/off and 
     sending IR commands based on whether music is playing or stopped.
     """
-    if read_pcm_status():
+    if read_pcm_status_local():
         # Music is playing
         if no_sound_time != 0:
             log_message("Music started playing")
