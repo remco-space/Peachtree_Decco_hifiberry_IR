@@ -95,7 +95,7 @@ def turn_amplifier_on():
 
     volume_ticks = round(HIFIBERRY_DEFAULT_VOLUME + random.gauss(0, 0.1 * HIFIBERRY_DEFAULT_VOLUME))
     write_amplifier_status(True)
-    AMPLIFIER_ON_CMD = "irsend SEND_ONCE decco ON "+HIFIBERRY_SOUND_CHANNEL+"  && sleep 30 && irsend SEND_ONCE decco -# "+str(volume_ticks)+" VOL_UP "
+    AMPLIFIER_ON_CMD = "irsend SEND_ONCE decco ON "+HIFIBERRY_SOUND_CHANNEL+"  && sleep 20 && irsend SEND_ONCE decco -# "+str(volume_ticks)+" VOL_UP "
     os.system(AMPLIFIER_ON_CMD)
 
     log_message("Amplifier turned ON")
