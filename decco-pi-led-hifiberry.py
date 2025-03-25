@@ -22,9 +22,6 @@ This program automatically controls the Peachtree Decco amplifier based on music
 - AUX2
 """
 
-#STATUS_FILE = "/var/local/peachtree_amplifier_status.txt"  # Path to save amplifier status
-HIFIBERRY_HOST = "root@192.168.178.6"
-HIFIBERRY_CHECK_SOUND_CMD = "cat /proc/asound/card0/pcm0p/sub0/status | grep RUNNING"
 HIFIBERRY_SOUND_CHANNEL = "AUX1" # Standard sound input
 HIFIBERRY_DEFAULT_VOLUME = 18 # measured in IR VOL_UP ticks
 
@@ -36,32 +33,6 @@ NO_SOUND_THRESHOLD = 60 * 60  # Turn off amp after 60 minutes of no sound
 def log_message(message):
     """Logs a message with a timestamp."""
     print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {message}")
-
-global flag_ssh_connection_failed 
-flag_ssh_connection_failed = False
-
-def read_pcm_status_remote():
-    """
-    Checks the PCM status on the remote device via SSH.
-    Returns True if 'RUNNING' is detected, indicating that music is playing.
-    """
-    global flag_ssh_connection_failed
-    try:
-        subprocess.run(
-            ["ssh",HIFIBERRY_HOST , "-x", HIFIBERRY_CHECK_SOUND_CMD],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            timeout=10,  # 10 seconds timeout
-            check=True
-        )
-        return True
-    except subprocess.TimeoutExpired:
-        if flag_ssh_connection_failed == False:
-            log_message("ssh connection failed. Command timed out after 10 seconds. This warning is only printed once.")
-            flag_ssh_connection_failed = True
-        return False
-    except subprocess.CalledProcessError:
-        return False
     
 def read_pcm_status_local():
     """
@@ -96,6 +67,7 @@ def turn_amplifier_on():
     volume_ticks = round(HIFIBERRY_DEFAULT_VOLUME + random.gauss(0, 0.1 * HIFIBERRY_DEFAULT_VOLUME))
     write_amplifier_status(True)
     AMPLIFIER_ON_CMD = "irsend SEND_ONCE decco ON "+HIFIBERRY_SOUND_CHANNEL+"  && sleep 20 && irsend SEND_ONCE decco -# "+str(volume_ticks)+" VOL_UP "
+    log_message(AMPLIFIER_ON_CMD)
     os.system(AMPLIFIER_ON_CMD)
 
     log_message("Amplifier turned ON")
