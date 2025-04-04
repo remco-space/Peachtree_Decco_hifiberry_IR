@@ -1,9 +1,15 @@
 #!/usr/bin/python3 
- 
+
 import time
 import os
 from datetime import datetime
 import subprocess
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
 
 """
 Peachtree Decco Remote Automator
@@ -30,10 +36,6 @@ STATUS_FILE = "/var/tmp/peachtree_amplifier_status.txt"  # Path to save amplifie
 CHECK_INTERVAL = 10  # Check every 10 seconds
 NO_SOUND_THRESHOLD = 60 * 60  # Turn off amp after 60 minutes of no sound
 
-def log_message(message):
-    """Logs a message with a timestamp."""
-    print(f"{datetime.now().strftime('%Y-%m-%d %H:%M:%S')} - {message}")
-    
 def read_pcm_status_local():
     """
     Checks the PCM status on the local device.
@@ -45,6 +47,7 @@ def read_pcm_status_local():
             first_line = f.readline().strip()
             return first_line == 'state: RUNNING'
     except (FileNotFoundError, IOError):
+        logging.warning("Amplifier state file not found or not accesible.")
         return False
     
 def read_amplifier_status():
@@ -62,22 +65,22 @@ def write_amplifier_status(on):
 def turn_amplifier_on():
     import random
     """Turns the amplifier on and logs the event."""
-    log_message("Amplifier turning ON")
+    logging.info("Amplifier turning ON")
 
     volume_ticks = round(HIFIBERRY_DEFAULT_VOLUME + random.gauss(0, 0.1 * HIFIBERRY_DEFAULT_VOLUME))
     write_amplifier_status(True)
     AMPLIFIER_ON_CMD = "irsend SEND_ONCE decco ON "+HIFIBERRY_SOUND_CHANNEL+"  && sleep 20 && irsend SEND_ONCE decco -# "+str(volume_ticks)+" VOL_UP "
-    log_message(AMPLIFIER_ON_CMD)
+    logging.info(AMPLIFIER_ON_CMD)
     os.system(AMPLIFIER_ON_CMD)
 
-    log_message("Amplifier turned ON")
+    logging.info("Amplifier turned ON")
 
 def turn_amplifier_off():
     """Turns the amplifier off and logs the event."""
     AMPLIFIER_OFF_CMD = "irsend SEND_ONCE decco OFF"  # Command to turn amplifier off
     os.system(AMPLIFIER_OFF_CMD)
     write_amplifier_status(False)
-    log_message("Amplifier turned OFF")
+    logging.info("Amplifier turned OFF")
 
 def amplifier_lightshow():
     """ Lightshow on the DECCO to indicate that this program has restarted"""
@@ -98,7 +101,7 @@ def process_music_status(amplifier_on, no_sound_time):
     if read_pcm_status_local():
         # Music is playing
         if no_sound_time != 0:
-            log_message("Music started playing")
+            logging.info("Music started playing")
             os.system("irsend SEND_ONCE decco AUX1")
 
         if not amplifier_on:
@@ -108,16 +111,16 @@ def process_music_status(amplifier_on, no_sound_time):
     else:
         # No music
         if no_sound_time == 0:
-            log_message("Music stopped playing")
+            logging.info("Music stopped playing")
 
         # change to a different channel to indicate the missing sound
         if (NO_SOUND_THRESHOLD * 0.03) < no_sound_time < (NO_SOUND_THRESHOLD * 0.03 + 1.5 *CHECK_INTERVAL ):
-            log_message("Music stopped playing for a while")
+            logging.info("Music stopped playing for a while")
             os.system("irsend SEND_ONCE decco USB")
 
         # switch amplfier to mute, to warn the user of the impending "power off" of the amplifier 
         if (NO_SOUND_THRESHOLD * 0.60) < no_sound_time < (NO_SOUND_THRESHOLD * 0.60 + 1.5 *CHECK_INTERVAL ):
-            log_message("Music stopped playing a long time ago")
+            logging.info("Music stopped playing a long time ago")
             os.system("irsend SEND_ONCE decco COAX")
 
         no_sound_time += CHECK_INTERVAL
@@ -132,7 +135,7 @@ def main():
     amplifier_on = read_amplifier_status()
     no_sound_time = 0 if amplifier_on else NO_SOUND_THRESHOLD  # Start with amp off if needed
 
-    log_message(f"Loop started with amplifier {'ON' if amplifier_on else 'OFF'}")
+    logging.info(f"Loop started with amplifier {'ON' if amplifier_on else 'OFF'}")
 
     amplifier_lightshow()
 
