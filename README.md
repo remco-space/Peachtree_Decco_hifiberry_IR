@@ -7,7 +7,7 @@ Raspberry Pi does everything: HiFiBerry DAC, IR LED, and the automation.
 Also here: **LIRC config files for the Peachtree Decco and the Peachtree Audio
 preDac remotes** — see [IR configs](#ir-configs).
 
-Why it is built this way: **[Automating a 2007 Peachtree Decco amplifier](https://remco.space/2026/07/15/automating-a-peachtree-decco-amplifier.html)**.
+Why it is built this way: **[Automating a 2007 Peachtree Decco amplifier](https://remco.space/2025/03/23/automating-a-peachtree-decco-amplifier.html)**.
 
 Works for me. Unmaintained — no support, but issues and better LIRC timings are welcome.
 
