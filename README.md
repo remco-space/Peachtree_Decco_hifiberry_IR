@@ -152,17 +152,6 @@ irsend LIST decco ""
 irsend SEND_ONCE Predac ONOFF
 ```
 
-## Housekeeping
-
-Two cron entries on this Pi — neither is required, both are here for reference:
-
-```cron
-# pull a fresh shairport-sync image weekly
-15 3 * * 0 cd /opt/shairport-sync && docker pull mikebrady/shairport-sync:development && docker compose up -d
-# reboot nightly
-5 4 * * * /sbin/shutdown -r
-```
-
 ## License
 
 MIT — see [LICENSE](LICENSE).
