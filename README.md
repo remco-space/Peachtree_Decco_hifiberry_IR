@@ -7,9 +7,17 @@ Raspberry Pi does everything: HiFiBerry DAC, IR LED, and the automation.
 Also here: **LIRC config files for the Peachtree Decco and the Peachtree Audio
 preDac remotes** — see [IR configs](#ir-configs).
 
-Why it is built this way: **[Automating a 2007 amplifier](https://remco.space/2026/07/15/automating-a-2007-amplifier.html)**.
+Why it is built this way: **[Automating a 2007 Peachtree Decco amplifier](https://remco.space/2026/07/15/automating-a-peachtree-decco-amplifier.html)**.
 
 Works for me. Unmaintained — no support, but issues and better LIRC timings are welcome.
+
+## Credit
+
+The Decco LIRC config here began as the one published by **Nick Touran (ntouran)**
+at **[Part of the Thing](https://partofthething.com/thoughts/a-lirc-config-file-for-the-peachtree-audio-decco-ir-remote-control/)**,
+who did the original `mode2` capture and `irrecord` work for this remote. This
+project would not exist without it. The version here adds a `repeat` header so
+that holding volume drives the motor smoothly — see [IR configs](#ir-configs).
 
 ## Prerequisites
 
@@ -133,7 +141,7 @@ Two LIRC remote configs, both recorded from the original handsets with `irrecord
 
 | file | remote | protocol | notes |
 |---|---|---|---|
-| `decco.lircd.conf` | Peachtree Audio Decco | 32-bit `SPACE_ENC` | has a `repeat` header, so holding volume drives the motor smoothly instead of stuttering |
+| `decco.lircd.conf` | Peachtree Audio Decco | 32-bit `SPACE_ENC` | derived from [Nick Touran's original](https://partofthething.com/thoughts/a-lirc-config-file-for-the-peachtree-audio-decco-ir-remote-control/); adds a `repeat` header (`9072 2239`) and a shorter gap (`108530` vs `251614`), so holding volume drives the motor smoothly instead of stuttering |
 | `predac.lircd.conf` | Peachtree Audio preDac | RC5, 13-bit | a different amplifier; as far as I can tell, the only preDac config published anywhere |
 
 Drop either into `/etc/lirc/lircd.conf.d/` and restart `lircd`. The remote names
