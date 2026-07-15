@@ -1,0 +1,3 @@
+# decco-pi-led-hifiberry.py — HA WebSocket listener.
+# IR is sent by shelling out to irsend(1) from the lirc package, not a binding.
+websockets>=16.0

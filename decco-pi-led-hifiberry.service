@@ -1,0 +1,21 @@
+[Unit]
+Description=peachtree amplifier LIRC automator
+After=network.target
+
+[Service]
+# Uses a venv that has the `websockets` library for the HA WebSocket listener.
+ExecStart=/opt/decco-venv/bin/python3 /usr/local/bin/decco-pi-led-hifiberry.py
+Restart=always
+User=root
+WorkingDirectory=/usr/local/bin
+StandardOutput=inherit
+StandardError=inherit
+Environment=PYTHONUNBUFFERED=1
+# HA_WS_URL / HA_TOKEN / EVENT_ENTITY — secret, not in git (see ha-listener.env.example).
+# Leading '-' makes the file optional: without it systemd refuses to start the
+# unit when the file is absent, and the HA listener is meant to be optional --
+# the script disables it and runs the playback monitor alone.
+EnvironmentFile=-/etc/decco/ha-listener.env
+
+[Install]
+WantedBy=multi-user.target

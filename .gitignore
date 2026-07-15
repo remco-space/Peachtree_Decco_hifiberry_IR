@@ -1,0 +1,7 @@
+# Real secrets live in /etc/decco/ha-listener.env on the Pi — never here.
+*.env
+!*.env.example
+
+__pycache__/
+*.pyc
+.DS_Store
